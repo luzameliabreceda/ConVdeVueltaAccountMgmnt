@@ -1,48 +1,6 @@
-# =============================================================================
-# PRODUCTION DEPENDENCIES (core application)
-# =============================================================================
+# SAM Local Requirements
+# This file is used by SAM local for dependency resolution
+# The actual dependencies are in src/requirements.txt
 
-# FastAPI and dependencies
-fastapi==0.115.6
-uvicorn[standard]==0.32.1
-pydantic==2.10.4
-pydantic-settings==2.7.0
-
-# Lambda adapter for ASGI applications
-mangum==0.19.0
-
-# AWS SDK
-boto3==1.35.91
-botocore==1.35.91
-
-# HTTP client
-httpx==0.28.1
-
-# Environment variables management
-python-dotenv==1.0.1
-
-# =============================================================================
-# INFRASTRUCTURE DEPENDENCIES (CDK)
-# =============================================================================
-
-# AWS CDK
-aws-cdk-lib==2.169.0
-constructs>=10.0.0,<11.0.0
-
-# =============================================================================
-# DEVELOPMENT DEPENDENCIES (local development & testing)
-# =============================================================================
-
-# AWS SAM CLI dependencies
-aws-sam-cli==1.132.0
-
-# Code formatting and linting
-black==24.10.0
-flake8==7.1.1
-isort==5.13.2
-
-# Type checking
-mypy==1.13.0
-
-# Development tools
-pre-commit==4.0.1 
+# Copy dependencies from src/requirements.txt
+-r src/requirements.txt 

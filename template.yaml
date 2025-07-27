@@ -18,8 +18,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: microservice-template-api
-      CodeUri: src/
-      Handler: lambda_handler.handler
+      CodeUri: ./
+      Handler: src.lambda_handler.handler
       Events:
         ApiEvent:
           Type: Api

@@ -1,15 +1,17 @@
-"""
-Main FastAPI application.
-"""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_injector import attach_injector
 
 from .core.config import settings
-from .routers import health
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from modules.app_module import app_module
+from .middleware.error_middleware import ErrorHandlingMiddleware
 
 
 def create_app() -> FastAPI:
-    """Create and configure the FastAPI application."""
     
     app = FastAPI(
         title=settings.app_name,
@@ -19,20 +21,22 @@ def create_app() -> FastAPI:
         redoc_url="/redoc" if settings.debug else None,
     )
     
-    # Add CORS middleware
+    app.add_middleware(ErrorHandlingMiddleware)
+    
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # Configure appropriately for production
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
     
-    # Include routers
-    app.include_router(health.router, prefix="/api/v1")
+    app.include_router(app_module.router)
+    
+    from modules.di_container import global_di_container
+    attach_injector(app, global_di_container.get_injector())
     
     return app
 
 
-# Create the app instance
 app = create_app() 

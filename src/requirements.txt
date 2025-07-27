@@ -1,9 +1,19 @@
-# Production dependencies for Lambda runtime
-fastapi==0.115.6
-pydantic==2.10.4
-pydantic-settings==2.7.0
+# =============================================================================
+# LAMBDA PRODUCTION DEPENDENCIES (minimal for deployment)
+# =============================================================================
+
+# FastAPI and core dependencies
+fastapi~=0.116
+pydantic~=2.11
+pydantic-settings~=2.10
+email-validator~=2.2
+
+# Lambda adapter for ASGI applications
 mangum==0.19.0
-boto3==1.35.91
-botocore==1.35.91
-httpx==0.28.1
-python-dotenv==1.0.1 
+
+# Database dependencies (only what's needed for Lambda)
+pynamodb~=6.1
+
+# Dependency injection
+injector==0.22.0
+fastapi-injector==0.8.0
