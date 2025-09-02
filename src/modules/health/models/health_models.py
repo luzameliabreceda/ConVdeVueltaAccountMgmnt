@@ -8,7 +8,6 @@ class HealthResponse(BaseModel):
     version: str
     environment: str
     service: str
-    os_environment: str
 
 
 class MessageResponse(BaseModel):

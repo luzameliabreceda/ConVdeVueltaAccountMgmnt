@@ -2,12 +2,13 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from ..models.user import User
+from ..models.dto import CreateUserRequest
 
 
 class UserServiceInterface(ABC):
     
     @abstractmethod
-    async def create_user(self, email: str, name: str) -> User:
+    async def create_user(self, request: CreateUserRequest) -> User:
         pass
     
     @abstractmethod

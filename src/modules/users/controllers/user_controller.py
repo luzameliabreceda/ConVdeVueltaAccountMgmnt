@@ -22,7 +22,7 @@ class UserController:
             description="Create a new user with email and name"
         )
         async def create_user(request: CreateUserRequest):
-            return await self._user_service.create_user(request.email, request.name)
+            return await self._user_service.create_user(request)
         
         @self.router.get(
             "/",

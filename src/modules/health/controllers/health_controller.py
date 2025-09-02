@@ -1,8 +1,7 @@
-import os
 from datetime import datetime
 from fastapi import APIRouter, status
 
-from ..models.health_models import HealthResponse, MessageResponse
+from ..models.health_models import HealthResponse
 from api.core.config import settings
 
 
@@ -27,18 +26,4 @@ class HealthController:
                 version=settings.app_version,
                 environment=settings.environment,
                 service=settings.app_name,
-                os_environment=os.environ.get("api_key")
             )
-        
-        @self.router.get(
-            "/test",
-            response_model=MessageResponse,
-            status_code=status.HTTP_200_OK,
-            summary="Test Endpoint",
-            description="Simple test endpoint to verify the API is working"
-        )
-        async def test_endpoint() -> MessageResponse:
-            return MessageResponse(
-                message="Hello from Microservice Template! 🚀",
-                timestamp=datetime.utcnow()
-            ) 

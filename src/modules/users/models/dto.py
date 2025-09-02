@@ -1,26 +1,70 @@
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional, List
 from pydantic import BaseModel, Field, EmailStr
 
 
 class CreateUserRequest(BaseModel):
     email: EmailStr
-    name: str = Field(..., min_length=1, max_length=100)
+    username: Optional[str] = Field(None, min_length=3, max_length=50)
+    first_name: Optional[str] = Field(None, min_length=1, max_length=100)
+    paternal_surname: Optional[str] = Field(None, min_length=1, max_length=100)
+    maternal_surname: Optional[str] = Field(None, min_length=1, max_length=100)
+    phone: Optional[str] = Field(None, max_length=20)
+    date_of_birth: Optional[date] = None
+    gender: Optional[str] = Field(None, max_length=10)
+    national_id: Optional[str] = Field(None, max_length=13)
+    password_hash: Optional[str] = Field(None, max_length=255)
+    enabled: bool = True
 
 
 class UpdateUserRequest(BaseModel):
-    name: Optional[str] = Field(None, min_length=1, max_length=100)
     email: Optional[EmailStr] = None
-    is_active: Optional[bool] = None
+    username: Optional[str] = Field(None, min_length=3, max_length=50)
+    first_name: Optional[str] = Field(None, min_length=1, max_length=100)
+    paternal_surname: Optional[str] = Field(None, min_length=1, max_length=100)
+    maternal_surname: Optional[str] = Field(None, min_length=1, max_length=100)
+    phone: Optional[str] = Field(None, max_length=20)
+    date_of_birth: Optional[date] = None
+    gender: Optional[str] = Field(None, max_length=10)
+    national_id: Optional[str] = Field(None, max_length=13)
+    enabled: Optional[bool] = None
+
+
+class UpdateProfileRequest(BaseModel):
+    first_name: Optional[str] = Field(None, min_length=1, max_length=100)
+    paternal_surname: Optional[str] = Field(None, min_length=1, max_length=100)
+    maternal_surname: Optional[str] = Field(None, min_length=1, max_length=100)
+    phone: Optional[str] = Field(None, max_length=20)
+    date_of_birth: Optional[date] = None
+    gender: Optional[str] = Field(None, max_length=10)
+
+
+class UpdateContactRequest(BaseModel):
+    email: Optional[EmailStr] = None
+    phone: Optional[str] = Field(None, max_length=20)
+
+
+class SetPasswordRequest(BaseModel):
+    password_hash: str = Field(..., max_length=255)
 
 
 class UserResponse(BaseModel):
     id: str
     email: str
-    name: str
-    is_active: bool
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    paternal_surname: Optional[str] = None
+    maternal_surname: Optional[str] = None
+    full_name: str
+    phone: Optional[str] = None
+    date_of_birth: Optional[date] = None
+    gender: Optional[str] = None
+    national_id: Optional[str] = None
+    registration_date: datetime
+    enabled: bool
     created_at: datetime
     updated_at: Optional[datetime] = None
+    deleted_at: Optional[datetime] = None
 
 
 class UsersListResponse(BaseModel):
