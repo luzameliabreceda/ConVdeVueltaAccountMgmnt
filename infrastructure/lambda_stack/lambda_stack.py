@@ -7,6 +7,7 @@ from aws_cdk import (
     aws_lambda as _lambda,
     aws_apigateway as apigateway,
     aws_logs as logs,
+    aws_ec2 as ec2,
     CfnOutput,
 )
 from constructs import Construct
@@ -30,6 +31,26 @@ class LambdaStack(Stack):
         # Get secrets from Secrets Manager at build time
         secrets_environment_vars = self._get_secrets_environment_variables()
 
+        # Import existing VPC
+        vpc = ec2.Vpc.from_lookup(
+            self, "ExistingVPC",
+            vpc_id="vpc-03d0fd348d0e6c756"
+        )
+
+        # Import existing security group for database access
+        db_security_group = ec2.SecurityGroup.from_lookup_by_id(
+            self, "DatabaseSecurityGroup",
+            security_group_id="sg-0af7fbc292559f5e7"
+        )
+
+        # Create security group for Lambda function
+        lambda_security_group = ec2.SecurityGroup(
+            self, "LambdaSecurityGroup",
+            vpc=vpc,
+            description=f"Security group for {self.service_name} Lambda function",
+            allow_all_outbound=True
+        )
+
         # Lambda function for the FastAPI application
         api_lambda = _lambda.Function(
             self, f"{self.service_name.title().replace('-', '')}ApiFunction",
@@ -51,9 +72,23 @@ class LambdaStack(Stack):
             environment={
                 "ENVIRONMENT": self.env_name,
                 "SERVICE_NAME": self.service_name,
+                "DATABASE_TYPE": "postgresql",  # Set database type to postgresql
                 **secrets_environment_vars,
             },
+            vpc=vpc,
+            vpc_subnets=ec2.SubnetSelection(
+                subnet_type=ec2.SubnetType.PUBLIC
+            ),
+            security_groups=[lambda_security_group],
+            allow_public_subnet=True,
             log_retention=logs.RetentionDays.THREE_DAYS if self.env_name == "dev" else logs.RetentionDays.ONE_WEEK,
+        )
+
+        # Allow Lambda to access the database
+        db_security_group.add_ingress_rule(
+            peer=lambda_security_group,
+            connection=ec2.Port.tcp(5432),
+            description=f"Allow {self.service_name} Lambda to access PostgreSQL database"
         )
 
         # API Gateway for the Lambda function
@@ -80,6 +115,18 @@ class LambdaStack(Stack):
             self, "LambdaFunctionArn",
             value=api_lambda.function_arn,
             description="Lambda Function ARN"
+        )
+
+        CfnOutput(
+            self, "VpcId",
+            value=vpc.vpc_id,
+            description="VPC ID where Lambda is deployed"
+        )
+
+        CfnOutput(
+            self, "DatabaseEndpoint",
+            value=secrets_environment_vars.get("POSTGRES_HOST", "Not configured"),
+            description="PostgreSQL Database Endpoint"
         )
 
     def _get_secrets_environment_variables(self) -> dict:

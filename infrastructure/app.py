@@ -20,7 +20,7 @@ LambdaStack(app, stack_name,
     env_name=environment,
     # Specify the AWS Region for deployment
     env=cdk.Environment(
-        account=os.getenv('CDK_DEFAULT_ACCOUNT'), 
+        account=os.getenv('CDK_DEFAULT_ACCOUNT', "cvdv"), 
         region='us-west-2'
     ),
     description=f"{service_name} - FastAPI Lambda with API Gateway ({environment})"

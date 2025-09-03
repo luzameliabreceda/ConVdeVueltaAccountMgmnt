@@ -17,6 +17,11 @@ class Settings(BaseSettings):
     
     database_type: str = "memory"
     
+    # JWT Configuration
+    jwt_secret_key: str = "your-secret-key-change-in-production"
+    jwt_algorithm: str = "HS256"
+    jwt_expiration_hours: int = 24
+    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         if self.service_name != "microservice-template":
